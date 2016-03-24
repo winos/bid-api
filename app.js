@@ -16,7 +16,10 @@ app.use(bodyParser.json())
 // load routes
 app.use(routerApp(express.Router()))
 
-
 const port = process.env.PORT || 8080
 
-app.listen(port, () => console.log(`listen in ${port}`))
+app
+	.listen(port, (err) => {
+		if(err) throw err
+		console.log(`listen in ${port}`)
+	})
