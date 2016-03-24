@@ -1,0 +1,29 @@
+{
+  "name": "api.bidking.com",
+  "version": "1.0.0",
+  "description": "api of bidking",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/winos/bid-api.git"
+  },
+  "keywords": [
+    "api",
+    "bidking",
+    "rest"
+  ],
+  "author": "Dawin Ossa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/winos/bid-api/issues"
+  },
+  "homepage": "https://github.com/winos/bid-api#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.9"
+  }
+}
