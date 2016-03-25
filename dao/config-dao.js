@@ -15,6 +15,16 @@ function configDao(Model) {
 	    		if (typeof success === 'function')
 	    			success(config)        		
 			})
+		},
+
+		save: (data, success, error) => {
+			var tmp = new Model(data)
+
+			tmp.save(data)
+				.then((result)=> {
+					if (typeof success === 'function')
+	    				success({hello:'mama'})  
+			})
 		}
 	}
 }

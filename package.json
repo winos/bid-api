@@ -22,8 +22,11 @@
   },
   "homepage": "https://github.com/winos/bid-api#readme",
   "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
-    "mongoose": "^4.4.9"
+    "jwt-simple": "^0.5.0",
+    "mongoose": "^4.4.9",
+    "underscore": "^1.8.3"
   }
 }

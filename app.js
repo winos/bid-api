@@ -2,13 +2,14 @@
 
 let express = require('express')
 , 	bodyParser = require('body-parser')
+, 	config = require('./config/setup')
 
 ,	app = express()
 ,   routerApp = require('./routes/routes-map')
 
 , 	mongoose = require('mongoose')
 
-mongoose.connect('mongodb://localhost/bidking');
+mongoose.connect(config.dbConnection);
 
 // config express
 app.use(bodyParser.json())
