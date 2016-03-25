@@ -24,7 +24,7 @@ module.exports = {
 		})
 	},
 
-	save: (req, res, next) => {
+	signup: (req, res, next) => {
 
 		let params = req.body
 

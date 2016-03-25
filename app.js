@@ -2,6 +2,7 @@
 
 let express = require('express')
 , 	bodyParser = require('body-parser')
+, 	cors = require('cors')
 , 	config = require('./config/setup')
 
 ,	app = express()
@@ -9,15 +10,18 @@ let express = require('express')
 
 , 	mongoose = require('mongoose')
 
+const port = process.env.PORT || 8080
+
 mongoose.connect(config.dbConnection);
 
 // config express
-app.use(bodyParser.json())
+app
+	.use(bodyParser.json())
+	.use(cors())
 
 // load routes
 app.use(routerApp(express.Router()))
 
-const port = process.env.PORT || 8080
 
 app
 	.listen(port, (err) => {
