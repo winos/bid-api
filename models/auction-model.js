@@ -7,10 +7,8 @@ let Schema = mongoose.Schema
 let auctionSchema = new Schema({  
     code: String,
 	credits_required: Number,
-	product_id: Number, 
-	price: {
-		price: Number 
-	},
+	product_id: String, 
+	price: Number, 
 	time_rules: {
 		init: Number,
 		start_at:Date // or now!

@@ -13,14 +13,6 @@ module.exports = {
 
 	save: (req, res) => {
 
-/*		let data = {
-			name: 'author',
-			value:'Dawin Ossa',
-			type: 'free',
-			active: true,
-		}
-*/
-
 		ConfigDao.save(data, (data)=> {
 			res.status(200).send(data)
 		}, (err)=> {

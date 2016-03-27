@@ -3,7 +3,7 @@
 let UserModel = require('../models/user-model')
 let bcrypt = require('bcrypt-nodejs')
 let jwtToken = require('jwt-simple')
-let secret = process.env.SECRET || "UAJS67AIKS"
+let secret = process.env.SECRET || require('../config/setup').jwt.token
 
 function userDao(Model) {
 
