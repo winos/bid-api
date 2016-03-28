@@ -1,13 +1,12 @@
 'use strict'
 
 let mongoose = require('mongoose')
-
 let Schema = mongoose.Schema
 
 let auctionSchema = new Schema({  
     code: String,
 	credits_required: Number,
-	product_id: String, 
+	product: { type: String, ref: "Product"}, 
 	price: Number, 
 	time_rules: {
 		init: Number,

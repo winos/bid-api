@@ -31,7 +31,7 @@ function AuctionController () {
 				}
 				res.status(200).json(response)
 			}, (err)=> {
-				throw 'Error'
+				res.send(err)
 			})
 		},
 	}

@@ -27,7 +27,9 @@ function auctionDao(Model) {
 	    					success(auction.toObject())  
 					}
 				})
-		}
+		},
+
+		model: ProductModel
 	}
 }
 

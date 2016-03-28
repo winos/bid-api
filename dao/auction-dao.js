@@ -1,6 +1,7 @@
 'use strict'
 
 let AuctionModel = require('../models/auction-model')
+let ProductDao = require('./product-dao')
 
 function auctionDao(Model) {
 
@@ -9,11 +10,15 @@ function auctionDao(Model) {
 
 		list: (criteria, success, error) => {
 
-			Model.find(criteria, function(err, user) {
-	    		if (err) error(err)
+			Model.find(criteria, function(err, auction) {
 
-	    		if (typeof success === 'function')
-	    			success(user)        		
+				ProductDao.model
+					.populate(auction, {path:'product'}, (err, auction)=>{
+		    			if (err) error(err)
+		    			if (typeof success === 'function')
+		    				success(auction)        		
+
+				})
 			})
 		},
 
