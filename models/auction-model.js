@@ -12,9 +12,10 @@ let auctionSchema = new Schema({
 		init: Number,
 		start_at:Date // or now!
 	},
-	bids: [{
-			time: Date, 
-			user: Number
+	bids: [
+		{
+			time: {type:Date, default: Date.now}, 
+			user: String
 		}
 	],
 	winner: {

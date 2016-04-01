@@ -25,9 +25,9 @@ app
 // load routes
 app.use(routerApp(express.Router()))
 
-io.on('connection', (socket)=>{
-  console.log('a user connected via socket')
-  io.emit('mama','mama')
+io.on('connection', (socket)=> {
+	let serviceSocket  =  require('./service/')(io)
+  	socket.on('auction:newbid', serviceSocket.bid)
 })
 
 http

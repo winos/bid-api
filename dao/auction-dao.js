@@ -21,7 +21,7 @@ function auctionDao(Model) {
 				})
 			})
 		},
-
+		model: AuctionModel,
 		save: (data, success, error) => {
 			let tmp = new Model(data)
 
