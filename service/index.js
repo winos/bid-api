@@ -18,7 +18,7 @@ module.exports = (io) => {
 	        		result = result.toObject()
 	        		
 	        		result = _.omit(result, 
-	        			['product', 'credits','active', 'time_rules'])
+	        			['product', 'credits','active'])
 	        		
 	        		var bid = _.last(result.bids)
 	        		
@@ -26,7 +26,8 @@ module.exports = (io) => {
 	        			username: bid.user,
 	        			time: bid.time,
 	        			auction_id:result._id,
-	        			price: result.price
+	        			price: result.price,
+	        			time_init: result.time_rules.init
 	        		}
 
 					fn({reset: true})

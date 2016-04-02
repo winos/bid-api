@@ -13,7 +13,7 @@ function AuctionController () {
 
 				let response  =  {
 					message: 'Saved auction successfully',
-					response:data // _.omit(data, ['password'])
+					response:data 
 				}
 
 				res.status(200).json(response)
