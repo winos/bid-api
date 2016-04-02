@@ -10,7 +10,7 @@ module.exports = (io) => {
 		
 		AuctionDao.model
 			.findByIdAndUpdate(data.auction, 
-				{ $push: {"bids":newbid}, $inc: {price: 50}}, 
+				{ $push: {'bids':newbid}, $inc: {price: 50}}, 
 	        	{safe: true, upsert: true, new : true},
 	        	(err, result) => {
 	        		if (err) throw 'Error'

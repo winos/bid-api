@@ -16,14 +16,15 @@ module.exports = {
 	save: (req, res, next) => {
 
 		var params = req.body
-
+		_.extend(params, {credits: {general: 100}});
+		
 		UserDao.save(params, (data) => {
 
 			var response  =  {
 				message: 'Saved user successfully',
 				response: _.omit(data, ['password'])
 			}
-
+			
 			res.status(200).json(response)
 
 		}, (err) => {
