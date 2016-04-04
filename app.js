@@ -13,7 +13,12 @@ let express = require('express')
 // db
 , 	mongoose = require('mongoose')
 
+// constants
 const port = process.env.PORT || 8080
+const isDev = process.env.DEV || false
+
+const BidTimer = require('./lib/bid-timer')
+const timer = new BidTimer()
 
 mongoose.connect(config.dbConnection);
 
@@ -25,9 +30,30 @@ app
 // load routes
 app.use(routerApp(express.Router()))
 
-io.on('connection', (socket)=> {
-	let serviceSocket  =  require('./service/')(io)
-  	socket.on('auction:newbid', serviceSocket.bid)
+var auctionsCollection = [
+	{countdown: 10, _id:'56feef953caa2b7b2864f17e'},
+	{countdown: 20, _id:'56fef1fa3caa2b7b2864f198'}
+]
+
+timer
+	.add(auctionsCollection)
+	.Run()
+
+
+let serviceSocket  =  require('./service/')(io, isDev, timer)
+
+timer.on('changeTimeAuction', serviceSocket.changeTimeAuction)
+
+// reset timer auction
+timer.on('resetAuction', (error, timer) => {
+	if (error) throw error
+})
+
+
+timer.on('finishAuction', serviceSocket.finishAuction)
+
+io.on('connection', (socket) => {
+  	socket.on('auction:newbid', serviceSocket.bidAuction)
 })
 
 http

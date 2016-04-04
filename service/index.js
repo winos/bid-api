@@ -1,24 +1,50 @@
 'use strict'
 let AuctionDao = require('../dao/auction-dao')
-const bidTimer = require('../lib/bid-timer')
-const timer = new bidTimer()
-
 let _ = require('underscore')
 
-module.exports = (io) => {
-
-	//updateTimeAuction()
+module.exports = (io, isDev, Timer) => {
 	
-	timer.on('finishAuction', function(auction) {
-		registerWinner(auction)
-		console.log('finish auction', auction.id)
-	})
+	this.lastUser = {}
 
-	timer.on('changeTimeAuction', function(auction) {
-		console.log('changeTime', auction.id)
-	})
+	function finishAuction (error, auction) {
+		if (error) throw new Error('An error has ocurred')
+		AuctionDao.model
+			.findByIdAndUpdate(auction.id, 
+				{'active': false, 'winner': {'user':'Dawin Ossa'}}, 
+	        	{safe: true, upsert: true, new : true},
+	        	(err, result) => {
+	        		if (err) throw new Error(err)
 
-	function bid (data, fn) {
+	        		result = result.toObject()
+	        		
+	        		result = _.omit(result, 
+	        			['product', 'credits'])
+	        		
+	        		var bid = _.last(result.bids)
+	        		
+	        		var response = {
+	        			winner: {
+	        				user: result.winner
+	        			},
+	        			auction_id:result._id,
+	        			status: true
+	        		}
+
+	        		io.emit('auction:winner', response)
+
+	        		if (isDev)
+						console.log('finish auction', response)
+				})
+	}
+
+	function changeTimeAuction (auction) {
+		io.emit('auction:changetime', auction)
+		
+		if (isDev)
+			console.log('auction:change Time', auction)
+	}
+
+	function bidAuction (data, fn) {
 		var newbid = {user: data.user.username}
 		
 		AuctionDao.model
@@ -43,15 +69,10 @@ module.exports = (io) => {
 	        			time_init: result.time_rules.init
 	        		}
 
+	        		// reset timer...
+					Timer.reset(result._id, result.time_rules.init)
 					fn({reset: true})
-
-					//updateTimeAuction()
-
-					if ( time > 0 ) {
-	        			refresh(response)
-					} else {
-						registerWinner(data)
-					}
+					refresh(response)
 				})
 	}
 
@@ -63,23 +84,9 @@ module.exports = (io) => {
 		io.emit('auction:winner', data)
 	}
 
-
-	function updateTimeAuction () {
-		var auctionsCollection
-		AuctionDao.list({}, (data)=> {
-			auctionsCollection = data
-		}, (err)=> {
-
-		})
-
-		for (var i in auctionsCollection) {
-			timer.addTimer()
-		}
-
-		timer.run()
-	}
-
 	return {
-		bid:bid
+		bidAuction:bidAuction,
+		finishAuction: finishAuction,
+		changeTimeAuction: changeTimeAuction		
 	}		
 }
