@@ -1,7 +1,10 @@
 'use strict'
 
 let mongoose = require('mongoose')
-let Schema = mongoose.Schema
+,   Schema = mongoose.Schema
+,   jwtToken = require('jwt-simple')
+
+const secret = process.env.SECRET || require('../config/setup').jwt.token
 
 let userSchema = new Schema({  
     id: Number,
@@ -41,5 +44,25 @@ let userSchema = new Schema({
     ],
     winner_auctions: [String]
 })
+
+userSchema.methods.updateToken = function () {
+    console.log('Update Token', this)
+}
+
+userSchema.pre('save', (next)=>{
+
+    var token = {
+        username: this.username,
+        credits: this.credits,
+        email: this.email,
+        id: this._id,
+        name: this.name,
+        lastname: this.lastname
+    }
+
+    this.token = jwtToken.encode(token, secret)
+    next()
+})
+
 
 module.exports = mongoose.model('User', userSchema)

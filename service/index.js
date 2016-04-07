@@ -1,92 +1,106 @@
 'use strict'
 let AuctionDao = require('../dao/auction-dao')
-let _ = require('underscore')
+,	UserDao = require('../dao/user-dao')
+
+const _ = require('underscore')
 
 module.exports = (io, isDev, Timer) => {
-	
+
 	this.lastUser = {}
 
 	function finishAuction (error, auction) {
 		if (error) throw new Error('An error has ocurred')
 		AuctionDao.model
-			.findByIdAndUpdate(auction.id, 
-				{'active': false, 'winner': {'user':'Dawin Ossa'}}, 
-	        	{safe: true, upsert: true, new : true},
-	        	(err, result) => {
-	        		if (err) throw new Error(err)
+		.findByIdAndUpdate(auction.id,
+			{'active': false, 'winner': {'user':'Dawin Ossa'}},
+			{safe: true, upsert: true, new : true},
+			(err, result) => {
+				if (err) throw new Error(err)
 
-	        		result = result.toObject()
-	        		
-	        		result = _.omit(result, 
-	        			['product', 'credits'])
-	        		
-	        		var bid = _.last(result.bids)
-	        		
-	        		var response = {
-	        			winner: {
-	        				user: result.winner
-	        			},
-	        			auction_id:result._id,
-	        			status: true
-	        		}
+				result = result.toObject()
 
-	        		io.emit('auction:winner', response)
+				result = _.omit(result,
+					['product', 'credits'])
 
-	        		if (isDev)
-						console.log('finish auction', response)
+					var bid = _.last(result.bids)
+
+					var response = {
+						winner: {
+							user: result.winner
+						},
+						auction_id:result._id,
+						status: true
+					}
+
+					io.emit('auction:winner', response)
+
+					if (isDev)
+					console.log('finish auction', response)
 				})
-	}
+			}
 
-	function changeTimeAuction (auction) {
-		io.emit('auction:changetime', auction)
-		
-		if (isDev)
-			console.log('auction:change Time', auction)
-	}
+			function changeTimeAuction (auction) {
+				io.emit('auction:changetime', auction)
+				if (isDev) console.log('auction:change Time', auction)
+			}
 
-	function bidAuction (data, fn) {
-		var newbid = {user: data.user.username}
-		
-		AuctionDao.model
-			.findByIdAndUpdate(data.auction, 
-				{ $push: {'bids':newbid}, $inc: {price: 50}}, 
-	        	{safe: true, upsert: true, new : true},
-	        	(err, result) => {
-	        		if (err) throw new Error('Error')
+			function bidAuction (data, fn) {
 
-	        		result = result.toObject()
-	        		
-	        		result = _.omit(result, 
-	        			['product', 'credits','active'])
-	        		
-	        		var bid = _.last(result.bids)
-	        		
-	        		var response = {
-	        			username: bid.user,
-	        			time: bid.time,
-	        			auction_id:result._id,
-	        			price: result.price,
-	        			time_init: result.time_rules.init
-	        		}
+				var newbid = {
+					idUser: data.user.id,
+					user: data.user.username
+				}
 
-	        		// reset timer...
-					Timer.reset(result._id, result.time_rules.init)
-					fn({reset: true})
-					refresh(response)
-				})
-	}
+				console.log('PUJA', newbid);
 
-	function refresh (data) {
-		io.emit('auction:refresh', data)
-	}
+				AuctionDao.model
+				.findByIdAndUpdate(data.auction,
+					{ $push: {'bids':newbid}, $inc: {price: 50}},
+					{safe: true, upsert: true, new : true},
+					(err, result) => {
+						if (err) throw new Error('Error')
 
-	function registerWinner (data) {
-		io.emit('auction:winner', data)
-	}
+						result = result.toObject()
 
-	return {
-		bidAuction:bidAuction,
-		finishAuction: finishAuction,
-		changeTimeAuction: changeTimeAuction		
-	}		
-}
+						result = _.omit(result,
+							['product','active'])
+
+							var bid = _.last(result.bids)
+
+							var response = {
+								username: bid.user,
+								time: bid.time,
+								auction_id:result._id,
+								price: result.price,
+								time_init: result.time_rules.init
+							}
+
+							// reset timer...
+							Timer.reset(result._id, result.time_rules.init)
+
+							UserDao.update(newbid.idUser,
+								{$inc: {'credits.general': -result.credits_required}},
+								(err, data) => {
+									if (err) throw err
+									console.log('UPDATE CREDITS',data)
+									fn({reset: true})
+									refresh(response)
+							})
+
+						})
+					}
+
+					function refresh (data) {
+						io.emit('auction:refresh', data)
+					}
+
+					function registerWinner (data) {
+						io.emit('auction:winner', data)
+					}
+
+					return {
+						bidAuction:bidAuction,
+						finishAuction: finishAuction,
+						changeTimeAuction: changeTimeAuction
+					}
+				}

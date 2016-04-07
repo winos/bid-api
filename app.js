@@ -1,17 +1,17 @@
 'use strict'
 // lib, config
 let express = require('express')
-, 	bodyParser = require('body-parser')
-, 	cors = require('cors')
-, 	config = require('./config/setup')
+,	bodyParser = require('body-parser')
+, cors = require('cors')
+, config = require('./config/setup')
 
 // server
 ,	app = express()
 ,	http = require('http').createServer(app)
 ,	io = require('socket.io').listen(http)
-,   routerApp = require('./routes/routes-map')
+, routerApp = require('./routes/routes-map')
 // db
-, 	mongoose = require('mongoose')
+, mongoose = require('mongoose')
 
 // constants
 const port = process.env.PORT || 8080
@@ -32,7 +32,7 @@ app.use(routerApp(express.Router()))
 
 var auctionsCollection = [
 	{countdown: 10, _id:'56feef953caa2b7b2864f17e'},
-	{countdown: 20, _id:'56fef1fa3caa2b7b2864f198'}
+	{countdown: 10, _id:'56fef1fa3caa2b7b2864f198'}
 ]
 
 timer
@@ -46,18 +46,17 @@ timer.on('changeTimeAuction', serviceSocket.changeTimeAuction)
 
 // reset timer auction
 timer.on('resetAuction', (error, timer) => {
-	if (error) throw error
+	if (error) throw error.message
 })
 
 
 timer.on('finishAuction', serviceSocket.finishAuction)
 
 io.on('connection', (socket) => {
-  	socket.on('auction:newbid', serviceSocket.bidAuction)
+	socket.on('auction:newbid', serviceSocket.bidAuction)
 })
 
-http
-	.listen(port, (err) => {
-		if(err) throw err
-		console.log(`listen in ${port}`)
-	})
+http.listen(port, (err) => {
+	if(err) throw err
+	console.log(`listen in ${port}`)
+})

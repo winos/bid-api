@@ -7,10 +7,10 @@ module.exports = {
 
 	authenticate: (req, res) => {
 		let params = req.body
-		
+
 		let dataAccess = {
 			email: params.email,
-			password: params.password 
+			password: params.password
 		}
 
 		UserDao.find(dataAccess, (data)=> {
