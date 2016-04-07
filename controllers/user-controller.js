@@ -14,15 +14,11 @@ module.exports = {
 	},
 
 	me: (req, res) => {
-		var user = req.query.user
+		var user = req.user
 		if (!user)
 			res.status(400).json({error: "params user is required"})
 
-		UserDao.me(user, (err, user)=>{
-			if (err) throw err.message
-
-			res.status(200).json(user)
-		})
+		res.status(200).json(user)
 	},
 
 	save: (req, res, next) => {

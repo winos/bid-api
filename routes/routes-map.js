@@ -16,11 +16,7 @@ module.exports = (app) => {
 		{
 			endpoint: '/config',
 			verbose: 'get',
-			//controller: configController.list,
-			controller: (req, res) =>  {
-				console.log(req)
-				res.send(req.user)
-			},
+			controller: configController.list,
 			auth: true
 		},
 
