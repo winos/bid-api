@@ -21,7 +21,6 @@ const BidTimer = require('./lib/bid-timer')
 const timer = new BidTimer()
 
 mongoose.connect(config.dbConnection);
-
 // config express
 app
 	.use(bodyParser.json())
@@ -39,16 +38,13 @@ timer
 	.add(auctionsCollection)
 	.Run()
 
-
 let serviceSocket  =  require('./service/')(io, isDev, timer)
 
 timer.on('changeTimeAuction', serviceSocket.changeTimeAuction)
-
 // reset timer auction
 timer.on('resetAuction', (error, timer) => {
 	if (error) throw error.message
 })
-
 
 timer.on('finishAuction', serviceSocket.finishAuction)
 
