@@ -31,8 +31,7 @@ module.exports = (app) => {
 		{
 			endpoint: '/users',
 			verbose: 'post',
-			controller: userController.save,
-			auth: true
+			controller: userController.save
 		},
 
 		{

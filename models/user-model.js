@@ -6,11 +6,12 @@ let mongoose = require('mongoose')
 
 const secret = process.env.SECRET || require('../config/setup').jwt.token
 
-let userSchema = new Schema({  
+let userSchema = new Schema({
     id: Number,
     name: String,
     token: String,
-    lastname: String ,
+    username: String,
+    lastname: String,
     birthday: Date,
     password: String,
     email: String,
@@ -27,29 +28,18 @@ let userSchema = new Schema({
     credits: {
         general: Number,
         by_exchange: Number
-        /*history: [
-            { 
-                code: '123133ooska78',
-                payment_method: 'efecty',
-                created_at: '23-03-2016',
-            }
-        ]*/
     },
     gifts: [
         {
             gift_id: Number,
             expired_at: Date,
-            active: Boolean 
+            active: Boolean
         }
     ],
     winner_auctions: [String]
 })
 
-userSchema.methods.updateToken = function () {
-    console.log('Update Token', this)
-}
-
-userSchema.pre('save', (next)=>{
+userSchema.pre('save', function (next) {
 
     var token = {
         username: this.username,
@@ -63,6 +53,5 @@ userSchema.pre('save', (next)=>{
     this.token = jwtToken.encode(token, secret)
     next()
 })
-
 
 module.exports = mongoose.model('User', userSchema)

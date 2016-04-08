@@ -6,8 +6,6 @@ const _ = require('underscore')
 
 module.exports = (io, isDev, Timer) => {
 
-	this.lastUser = {}
-
 	function finishAuction (error, auction) {
 		if (error) throw new Error('An error has ocurred')
 		AuctionDao.model
@@ -51,43 +49,42 @@ module.exports = (io, isDev, Timer) => {
 					user: data.user.username
 				}
 
-				console.log('PUJA', newbid);
+				if (Timer.isActive) {
 
-				AuctionDao.model
-				.findByIdAndUpdate(data.auction,
-					{ $push: {'bids':newbid}, $inc: {price: 50}},
-					{safe: true, upsert: true, new : true},
-					(err, result) => {
-						if (err) throw new Error('Error')
+					AuctionDao.model
+					.findByIdAndUpdate(data.auction,
+						{ $push: {'bids':newbid}, $inc: {price: 50}},
+						{safe: true, upsert: true, new : true},
+						(err, result) => {
+							if (err) throw new Error('Error')
 
-						result = result.toObject()
+							result = result.toObject()
 
-						result = _.omit(result,
-							['product','active'])
+							result = _.omit(result,
+								['product','active'])
 
-							var bid = _.last(result.bids)
+								var bid = _.last(result.bids)
 
-							var response = {
-								username: bid.user,
-								time: bid.time,
-								auction_id:result._id,
-								price: result.price,
-								time_init: result.time_rules.init
-							}
+								var response = {
+									username: bid.user,
+									time: bid.time,
+									auction_id:result._id,
+									price: result.price,
+									time_init: result.time_rules.init
+								}
 
-							// reset timer...
-							Timer.reset(result._id, result.time_rules.init)
+								// reset timer...
+								Timer.reset(result._id, result.time_rules.init)
 
-							UserDao.update(newbid.idUser,
-								{$inc: {'credits.general': -result.credits_required}},
-								(err, data) => {
-									if (err) throw err
-									console.log('UPDATE CREDITS',data)
-									fn({reset: true})
-									refresh(response)
+								UserDao.update(newbid.idUser,
+									{$inc: {'credits.general': -result.credits_required}},
+									(err, data) => {
+										if (err) throw err
+										fn({reset: true})
+										refresh(response)
+								})
 							})
-
-						})
+						}
 					}
 
 					function refresh (data) {

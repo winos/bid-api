@@ -24,7 +24,7 @@ module.exports = {
 	save: (req, res, next) => {
 
 		var params = req.body
-		_.extend(params, {credits: {general: 100}});
+		_.extend(params, {credits: {general: 100}})
 
 		UserDao.save(params, (data) => {
 
