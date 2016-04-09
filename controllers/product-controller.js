@@ -4,7 +4,7 @@ let ProductDao = require('../dao/product-dao')
 let _ = require('underscore')
 
 function AuctionController () {
-	
+
 	return {
 		save : (req, res) => {
 			let params = req.body
@@ -13,7 +13,7 @@ function AuctionController () {
 
 				let response  =  {
 					message: 'Saved product successfully',
-					response:data // _.omit(data, ['password'])
+					response:data
 				}
 
 				res.status(200).json(response)
@@ -27,7 +27,7 @@ function AuctionController () {
 			ProductDao.list({}, (data)=> {
 				var response  =  {
 					message: 'List of auctions',
-					response:data 
+					response:data
 				}
 				res.status(200).json(response)
 			}, (err)=> {

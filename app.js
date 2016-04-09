@@ -30,8 +30,8 @@ app
 app.use(routerApp(express.Router()))
 
 var auctionsCollection = [
-	{countdown: 10, _id:'56feef953caa2b7b2864f17e'},
-	{countdown: 10, _id:'56fef1fa3caa2b7b2864f198'}
+	{countdown: 1000, _id:'56feef953caa2b7b2864f17e'},
+	{countdown: 1000, _id:'56fef1fa3caa2b7b2864f198'}
 ]
 
 timer
