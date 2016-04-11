@@ -7,6 +7,8 @@ function userDao(Model) {
 
 	// Public methods
 	return {
+		model: UserModel,
+		
 		list: (criteria, success, error) => {
 
 			Model.find(criteria, function(err, user) {
@@ -72,8 +74,7 @@ function userDao(Model) {
 		me: (id, success) => {
 			Model.findOne({_id:id}, (err, user) => {
 				if (err) success(new Error(err), null)
-
-	      success(null, user.toObject())
+				if (user) success(null, user.toObject())
 			})
 		}
 	}

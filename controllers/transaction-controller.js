@@ -7,7 +7,7 @@ function TransactionController () {
   return {
     save: (req, res) => {
 
-      TransactionDao.save(req.body, (transaction)=>{
+      TransactionDao.save(req.body, (transaction) => {
         let response  =  {
           message: 'Saved transaction successfully',
           response: _.omit(transaction, '__v')

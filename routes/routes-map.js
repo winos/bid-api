@@ -5,6 +5,7 @@ let userController = require('../controllers/user-controller')
 let authController = require('../controllers/auth-controller')
 let auctionController = require('../controllers/auction-controller')
 let productController = require('../controllers/product-controller')
+let creditController = require('../controllers/credit-controller')
 let UserDao = require('../dao/user-dao')
 let transactionController = require('../controllers/transaction-controller')
 
@@ -69,6 +70,20 @@ module.exports = (app) => {
 			endpoint: '/products',
 			verbose: 'post',
 			controller: productController.save,
+			auth: true
+		},
+
+		// credits
+		{
+			endpoint: '/credits',
+			verbose: 'get',
+			controller: creditController.list,
+			auth: true
+		},
+		{
+			endpoint: '/credits',
+			verbose: 'post',
+			controller: creditController.save,
 			auth: true
 		},
 
