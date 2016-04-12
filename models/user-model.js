@@ -7,51 +7,69 @@ let mongoose = require('mongoose')
 const secret = process.env.SECRET || require('../config/setup').jwt.token
 
 let userSchema = new Schema({
-    id: Number,
-    name: String,
-    token: String,
-    username: String,
-    lastname: String,
-    birthday: Date,
-    password: String,
-    email: String,
-    register_at: Date,
-    active: Boolean,
-    gender: String,
-    city: String,
-    addresses: [
-        {
-            street: String,
-            tag: String
-        }
-    ],
-    credits: {
-        general: Number,
-        by_exchange: Number
-    },
-    gifts: [
-        {
-            gift_id: Number,
-            expired_at: Date,
-            active: Boolean
-        }
-    ],
-    winner_auctions: [String]
+  token: {
+    type: String
+  },
+  username: {
+    type: String,
+    required: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  birthday: {
+    type: Date,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  isActive: {
+    type: Boolean,
+    required: true,
+    default: true
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  city: {
+    type: String
+    //required: true
+  },
+  addresses: [{
+      street: String,
+      tag: String
+  }],
+  gifts: [{
+      gift_id: Number,
+      expired_at: Date,
+      active: Boolean
+  }]
 })
 
 userSchema.pre('save', function (next) {
+  var token = {
+    firstName: this.firstName,
+    email: this.email,
+    id: this._id,
+    username: this.username,
+    lastName: this.lastName
+  }
 
-    var token = {
-        username: this.username,
-        credits: this.credits,
-        email: this.email,
-        id: this._id,
-        name: this.name,
-        lastname: this.lastname
-    }
-
-    this.token = jwtToken.encode(token, secret)
-    next()
+  this.token = jwtToken.encode(token, secret)
+  next()
 })
 
 module.exports = mongoose.model('User', userSchema)

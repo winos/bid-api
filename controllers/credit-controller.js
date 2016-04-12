@@ -8,12 +8,14 @@ function CreditController () {
 	return {
 		save : (req, res) => {
 			let params = req.body
+			params.userId = req.user._id
 
 			CreditDao.save(params, (data) => {
 
 				let response  =  {
 					message: 'Saved credits successfully',
-					response: data
+					response: data,
+					status: true
 				}
 
 				res.status(200).json(response)

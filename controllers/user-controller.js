@@ -24,7 +24,8 @@ module.exports = {
 	save: (req, res, next) => {
 
 		var params = req.body
-		_.extend(params, {credits: {general: 100}})
+		params.birthday = new Date(params.birthday)
+		//_.extend(params, {credits: {general: 100}})
 
 		UserDao.save(params, (data) => {
 
@@ -34,7 +35,6 @@ module.exports = {
 			}
 
 			res.status(200).json(response)
-
 		}, (err) => {
 			res.send(err)
 		})

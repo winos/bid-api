@@ -8,9 +8,7 @@ function userDao(Model) {
 	// Public methods
 	return {
 		model: UserModel,
-		
 		list: (criteria, success, error) => {
-
 			Model.find(criteria, function(err, user) {
 	    		if (err) error(err)
 
@@ -22,16 +20,15 @@ function userDao(Model) {
 		find: (criteria, success, error) => {
 
 			Model.findOne({email:criteria.email}, function(err, user) {
-
 	    		if (err) error(err)
 
-	    		if (typeof success === 'function')
-
+					if (typeof success === 'function')
 	    			if (!user)
-	    				return success({status: false, 'message': 'user not found', data:null})
+	    				return success({
+								status: false, 'message': 'user not found', data:null
+							})
 
 	    			bcrypt.compare(criteria.password, user.password,
-
 	    				(err, res) => {
 							if (res === true)
 		    					success({
@@ -42,7 +39,8 @@ function userDao(Model) {
 		    						}
 		    					})
 							else
-		    					success({status: false, message: 'Authentication failed. wrong password', data: null})
+		    					success({status: false,
+										message: 'Authentication failed. wrong password', data: null})
 					})
 			})
 		},
@@ -51,18 +49,17 @@ function userDao(Model) {
 			data.password = bcrypt.hashSync(data.password)
 			let tmp = new Model(data)
 
-			tmp.save(data).then((user)=> {
+			tmp.save(data).then((user) => {
 					if (user) {
 						if (typeof success === 'function'){
 							success(user.toObject())
 						}
 					}
-				})
+				}).catch((result) => error(result))
 		},
 
 		update: (id, data, success) => {
-			Model
-			.findByIdAndUpdate(id, data,
+			Model.findByIdAndUpdate(id, data,
 	        	{safe: true, upsert: true, new : true},
 	        	(err, result) => {
 	        		if (err) success(new Error(err), null)
