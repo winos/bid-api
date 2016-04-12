@@ -13,7 +13,7 @@ function auctionDao(Model) {
 	    		if (err) error(err)
 
 	    		if (typeof success === 'function')
-	    			success(user)        		
+	    			success(user)
 			})
 		},
 
@@ -24,7 +24,7 @@ function auctionDao(Model) {
 				.then((auction)=> {
 					if (auction) {
 						if (typeof success === 'function')
-	    					success(auction.toObject())  
+	    					success(auction.toObject())
 					}
 				})
 		},
@@ -33,4 +33,4 @@ function auctionDao(Model) {
 	}
 }
 
-module.exports = new auctionDao(ProductModel) 
+module.exports = new auctionDao(ProductModel)

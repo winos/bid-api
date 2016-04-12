@@ -1,6 +1,7 @@
 'use strict'
 
 let UserDao = require('../dao/user-dao')
+let TransactionDao = require('../dao/transaction-dao')
 let _ = require('underscore')
 
 module.exports = {
@@ -29,12 +30,24 @@ module.exports = {
 
 		UserDao.save(params, (data) => {
 
-			var response  =  {
-				message: 'Saved user successfully',
-				response: _.omit(data, ['password'])
-			}
+			// register transaction initial
+			TransactionDao.save({
+				user: data._id,
+				quantity: 1000,
+				type: "Income",
+				sign: 50
+			}, function (transaction) {
 
-			res.status(200).json(response)
+				if (transaction) {
+					
+					var response  =  {
+						message: 'Saved user successfully',
+						response: _.omit(data, ['password'])
+					}
+
+					res.status(200).json(response)
+				}
+			})
 		}, (err) => {
 			res.send(err)
 		})
