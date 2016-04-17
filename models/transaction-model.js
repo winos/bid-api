@@ -47,14 +47,13 @@ transactionSchema.statics.balance = function (userId) {
         }
       }
   ]).then((results) => {
-
     var income = _([
       _.findWhere(results,{ _id: 'Income' }),
       _.findWhere(results, { _id: 'Gift' })
     ]).reduce((x,b) => {
       return x + (b && b.quantity) || 0
     }, 0)
-    , spend = _.findWhere(results, {type:'Spend'})
+    , spend = _.findWhere(results, {_id:'Spend'})
     , expense = (spend && spend.quantity || 0)
 
     return {
