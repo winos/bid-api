@@ -1,6 +1,7 @@
 'use strict'
 let AuctionDao = require('../dao/auction-dao')
 ,	UserDao = require('../dao/user-dao')
+,	TransactionDao = require('../dao/transaction-dao')
 
 const _ = require('underscore')
 
@@ -76,12 +77,18 @@ module.exports = (io, isDev, Timer) => {
 								// reset timer...
 								Timer.reset(result._id, result.time_rules.init)
 
-								UserDao.update(newbid.idUser,
-									{$inc: {'credits.general': -result.credits_required}},
-									(err, data) => {
-										if (err) throw err
+								// register transaction initial
+								TransactionDao.save({
+									user: newbid.idUser,
+									quantity: result.credits_required,
+									type: "Spend",
+									sign: 50
+								}, function (transaction) {
+
+									if (transaction) {
 										fn({reset: true})
 										refresh(response)
+									}
 								})
 							})
 						}

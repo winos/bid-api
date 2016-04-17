@@ -19,14 +19,22 @@ module.exports = {
 		if (!user)
 			res.status(400).json({error: "params user is required"})
 
-		res.status(200).json(user)
+		TransactionDao.findBalance(user._id, (error, transaction)=> {
+			let response = _.extend(user,
+					{
+						credits: {
+							general: transaction.balance
+						}
+					})
+			res.status(200).json(response)
+		})
+
 	},
 
 	save: (req, res, next) => {
 
 		var params = req.body
 		params.birthday = new Date(params.birthday)
-		//_.extend(params, {credits: {general: 100}})
 
 		UserDao.save(params, (data) => {
 
@@ -39,7 +47,6 @@ module.exports = {
 			}, function (transaction) {
 
 				if (transaction) {
-					
 					var response  =  {
 						message: 'Saved user successfully',
 						response: _.omit(data, ['password'])

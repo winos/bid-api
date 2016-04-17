@@ -30,6 +30,7 @@
     "mongoose": "^4.4.9",
     "passport": "^0.3.2",
     "passport-jwt": "^2.0.0",
+    "q": "^1.4.1",
     "socket.io": "^1.4.5",
     "underscore": "^1.8.3"
   }

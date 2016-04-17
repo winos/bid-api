@@ -17,6 +17,15 @@ function TransactionDao(Model) {
 			})
 		},
 
+		findBalance: (id, success) => {
+
+			Model.balance(id).then((balance)=> {
+				if (balance)
+					if (typeof success === 'function')
+						success(false, balance)
+			}).catch((error) => success(true, error))
+		},
+
 		save: (data, success, error) => {
 			let tmp = new Model(data)
 
