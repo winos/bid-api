@@ -75,7 +75,8 @@ module.exports = (io, isDev, Timer) => {
 							user: newbid.idUser,
 							quantity: result.credits_required,
 							type: "Spend",
-							sign: 50
+							sign: 50,
+							isActive:true
 						}, function (transaction) {
 
 							if (transaction) {

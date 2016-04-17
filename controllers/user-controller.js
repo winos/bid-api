@@ -43,7 +43,8 @@ module.exports = {
 				user: data._id,
 				quantity: 1000,
 				type: "Income",
-				sign: 50
+				sign: 50,
+				isActive:true
 			}, function (transaction) {
 
 				if (transaction) {

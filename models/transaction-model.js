@@ -38,7 +38,7 @@ let transactionSchema = new Schema({
 transactionSchema.statics.balance = function (userId) {
   return Q.nbind(this.aggregate, this)([
       {
-        $match: { user: new ObjectId(userId)},
+        $match: { user: new ObjectId(userId), isActive: true}
       },
       {
         $group: {
@@ -51,7 +51,7 @@ transactionSchema.statics.balance = function (userId) {
       _.findWhere(results,{ _id: 'Income' }),
       _.findWhere(results, { _id: 'Gift' })
     ]).reduce((x,b) => {
-      return x + (b && b.quantity) || 0
+        return x + ((b && b.quantity) || 0)
     }, 0)
     , spend = _.findWhere(results, {_id:'Spend'})
     , expense = (spend && spend.quantity || 0)
