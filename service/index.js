@@ -2,6 +2,7 @@
 let AuctionDao = require('../dao/auction-dao')
 ,	UserDao = require('../dao/user-dao')
 ,	TransactionDao = require('../dao/transaction-dao')
+, BidDao = require('../dao/bid-dao')
 
 const _ = require('underscore')
 
@@ -80,8 +81,18 @@ module.exports = (io, isDev, Timer) => {
 						}, function (transaction) {
 
 							if (transaction) {
-								fn({reset: true})
-								refresh(response)
+
+								// bid
+								let bidInfo = {
+									transaction: transaction._id,
+									auction: result._id,
+									user: newbid.idUser
+								}
+								
+								BidDao.save(bidInfo, (bid) => {
+									fn({reset: true})
+									refresh(response)
+								})
 							}
 						})
 					})
