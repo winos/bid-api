@@ -1,6 +1,8 @@
 'use strict'
 
 let CreditDao = require('../dao/credit-dao')
+let TransactionDao = require('../dao/transaction-dao')
+
 let _ = require('underscore')
 
 function CreditController () {

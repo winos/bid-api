@@ -82,13 +82,13 @@ module.exports = (io, isDev, Timer) => {
 
 							if (transaction) {
 
-								// bid
+								// bid 
 								let bidInfo = {
 									transaction: transaction._id,
 									auction: result._id,
 									user: newbid.idUser
 								}
-								
+
 								BidDao.save(bidInfo, (bid) => {
 									fn({reset: true})
 									refresh(response)

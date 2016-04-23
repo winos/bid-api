@@ -18,7 +18,11 @@ let creditsSchema = new Schema({
   isActive: {
     type: Boolean,
     required: true,
-    default: true
+    default: false
+  },
+  transaction: {
+    type:  Schema.Types.ObjectId,
+    ref: 'Transaction'
   }
 })
 
