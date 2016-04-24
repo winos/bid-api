@@ -14,8 +14,8 @@ module.exports = (io, isDev, Timer) => {
 		var checkAuction =  false
 
 		if (!checkAuction) {
-			Timer.reset(auction._id, 20)
 			bidUserRandom.get((username) => {
+				Timer.reset(auction._id, 20)
 				var response = {
 					username: username,
 					time: auction.countdown,
