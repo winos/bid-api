@@ -1,38 +1,62 @@
 'use strict'
+
 let AuctionDao = require('../dao/auction-dao')
 ,	UserDao = require('../dao/user-dao')
 ,	TransactionDao = require('../dao/transaction-dao')
 , BidDao = require('../dao/bid-dao')
+, bidUserRandom = require('../lib/bid-user')
 
 const _ = require('underscore')
 
 module.exports = (io, isDev, Timer) => {
 
-	function finishAuction (error, auction) {
-	if (error) throw new Error('An error has ocurred')
-	AuctionDao.model.findByIdAndUpdate(auction.id,
-	{'active': false, 'winner': {'user':'Dawin Ossa'}},
-	{safe: true, upsert: true, new : true},
-	(err, result) => {
-		if (err) throw new Error(err)
+	function preFinishAuction (err, auction, call) {
+		var checkAuction =  false
 
-		result = result.toObject()
-		result = _.omit(result, ['product', 'credits'])
-
-		var bid = _.last(result.bids)
-
-		var response = {
-			winner: {
-				user: result.winner
-			},
-			auction_id:result._id,
-			status: true
+		if (!checkAuction) {
+			Timer.reset(auction._id, 20)
+			bidUserRandom.get((username) => {
+				var response = {
+					username: username,
+					time: auction.countdown,
+					auction_id:auction._id,
+					price: 100,
+					time_init: 20
+				}
+				refresh(response)
+			})
+			call(false)
+		} else {
+			call(true)
 		}
+	}
 
-		io.emit('auction:winner', response)
+	function finishAuction (error, auction) {
+		if (error) throw new Error('An error has ocurred')
+		AuctionDao.model.findByIdAndUpdate(auction._id,
+			{'active': false, 'winner': {'user':'Dawin Ossa'}},
+			{safe: true, upsert: true, new : true},
+			(err, result) => {
+				if (err) throw new Error(err)
 
-		if (isDev) console.log('finish auction', response)
-		})
+				result = result.toObject()
+				result = _.omit(result, ['product', 'credits'])
+
+				var bid = _.last(result.bids)
+
+				var response = {
+					winner: {
+						user: result.winner
+					},
+					auction_id:result._id,
+					status: true
+				}
+
+				io.emit('auction:winner', response)
+
+				if (isDev) console.log('finish auction', response)
+			})
+
 	}
 
 	function changeTimeAuction (auction) {
@@ -69,7 +93,7 @@ module.exports = (io, isDev, Timer) => {
 						}
 
 						// reset timer...
-						Timer.reset(result._id, result.time_rules.init)
+						Timer.reset(result._id.toString(), result.time_rules.init)
 
 						// register transaction initial
 						TransactionDao.save({
@@ -81,8 +105,7 @@ module.exports = (io, isDev, Timer) => {
 						}, function (transaction) {
 
 							if (transaction) {
-
-								// bid 
+								// bid
 								let bidInfo = {
 									transaction: transaction._id,
 									auction: result._id,
@@ -110,6 +133,7 @@ module.exports = (io, isDev, Timer) => {
 			return {
 				bidAuction:bidAuction,
 				finishAuction: finishAuction,
+				preFinishAuction: preFinishAuction,
 				changeTimeAuction: changeTimeAuction
 			}
 	}

@@ -31,7 +31,7 @@ app.use(routerApp(express.Router()))
 
 var auctionsCollection = [
 	{countdown: 1000, _id:'56feef953caa2b7b2864f17e'},
-	{countdown: 1000, _id:'56fef1fa3caa2b7b2864f198'}
+	{countdown: 6, _id:'56fef1fa3caa2b7b2864f198'}
 ]
 
 timer
@@ -46,6 +46,7 @@ timer.on('resetAuction', (error, timer) => {
 	if (error) throw error.message
 })
 
+timer.on('preFinishAuction', serviceSocket.preFinishAuction)
 timer.on('finishAuction', serviceSocket.finishAuction)
 
 io.on('connection', (socket) => {
